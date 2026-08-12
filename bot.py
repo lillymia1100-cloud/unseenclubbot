@@ -1,6 +1,7 @@
 import os
 import json
 import threading
+import asyncio
 import psycopg
 
 from flask import Flask, jsonify
@@ -85,6 +86,107 @@ def save_post(post):
             ))
 
         conn.commit()
+# =========================
+# BATCH NOTIFICATION
+# =========================
+
+pending_notifications = 0
+notification_task = None
+notification_lock = asyncio.Lock()
+
+
+async def send_batch_notification(bot):
+
+    global pending_notifications
+
+    await asyncio.sleep(10)
+
+    async with notification_lock:
+
+        count = pending_notifications
+        pending_notifications = 0
+
+    if count <= 0:
+        return
+
+    if count == 1:
+        text = (
+            "1 New Post Uploaded! ✔\n\n"
+            "Tap below to view"
+        )
+    else:
+        text = (
+            f"{count} New Posts Uploaded! ✔\n\n"
+            "Tap below to view"
+        )
+
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "📱 Open Channel",
+                web_app=WebAppInfo(
+                    url=WEB_APP_URL
+                )
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 Backup Channel",
+                url="https://t.me/+hOT3oXhwGyxmNjA1"
+            )
+        ]
+    ]
+
+    with psycopg.connect(DATABASE_URL) as conn:
+
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                SELECT user_id
+                FROM bot_users
+            """)
+
+            users = cur.fetchall()
+
+    print(
+        f"📢 Sending notification to {len(users)} users"
+    )
+
+    for row in users:
+
+        user_id = row[0]
+
+        try:
+
+            await bot.send_message(
+                chat_id=user_id,
+                text=text,
+                reply_markup=InlineKeyboardMarkup(
+                    keyboard
+                )
+            )
+
+            await asyncio.sleep(0.05)
+
+        except Exception as e:
+
+            print(
+                "❌ Notification failed:",
+                user_id,
+                e
+            )
+
+
+async def schedule_notification(bot):
+
+    global notification_task
+
+    if notification_task is None or notification_task.done():
+
+        notification_task = asyncio.create_task(
+            send_batch_notification(bot)
+        )
+
 # =========================
 # WEB APP API
 # =========================
@@ -294,7 +396,7 @@ async def channel_post(
 
             print("CHANNEL LINK:", word)
 
-        # =========================
+    # =========================
     # PHOTO
     # =========================
 
@@ -327,29 +429,35 @@ async def channel_post(
             post.document.file_id
         )
 
-    # =========================
-    # FALLBACK LINK
-    # =========================
-
-    if not new_post["links"] and new_post["thumb"]:
-
-        new_post["links"] = [
-            new_post["thumb"]
-        ]
-
-        print("FINAL POST:", new_post)
+    print("FINAL POST:", new_post)
 
     # =========================
-    # SAVE TO SUPABASE
+    # SAVE TO DATABASE
     # =========================
 
     save_post(new_post)
+
+    # =========================
+    # BATCH NOTIFICATION
+    # =========================
+
+    global pending_notifications
+
+    async with notification_lock:
+
+        pending_notifications += 1
+
+    await schedule_notification(context.bot)
 
     print(
         "✅ POST SAVED PERMANENTLY:",
         new_post["id"]
     )
 
+    print(
+        "📢 PENDING NOTIFICATIONS:",
+        pending_notifications
+    )
 # =========================
 # WEB SERVER
 # =========================
@@ -413,9 +521,13 @@ def main():
         "📣 Channel post listener is running..."
     )
 
-    app.run_polling(
+        app.run_polling(
         drop_pending_updates=True
     )
+
+
+if __name__ == "__main__":
+    main()
 
 
 if __name__ == "__main__":
