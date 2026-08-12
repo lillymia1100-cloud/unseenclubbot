@@ -170,9 +170,11 @@ async def start_command(
     keyboard = [
         [
             InlineKeyboardButton(
-                "📱 Open Channel",
-                url="https://unseenclubbot.netlify.app/"
-            )
+    "📱 Open Channel",
+    web_app=WebAppInfo(
+        url="https://unseenclubbot.netlify.app/"
+    )
+)
         ],
         [
             InlineKeyboardButton(
