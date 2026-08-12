@@ -243,13 +243,6 @@ async def channel_post(
         new_post["id"]
     )
 
-    save_post(new_post)
-
-    print(
-        "✅ POST SAVED PERMANENTLY:",
-        new_post["id"]
-    )
-
 # =========================
 # WEB SERVER
 # =========================
