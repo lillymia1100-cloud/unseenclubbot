@@ -137,7 +137,62 @@ async def start(
             keyboard
         )
     )
+async def start_command(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
 
+    user = update.effective_user
+
+    if not user:
+        return
+
+    with psycopg.connect(DATABASE_URL) as conn:
+
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                INSERT INTO bot_users
+                (user_id, username, first_name)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (user_id)
+                DO UPDATE SET
+                    username = EXCLUDED.username,
+                    first_name = EXCLUDED.first_name
+            """, (
+                user.id,
+                user.username,
+                user.first_name
+            ))
+
+        conn.commit()
+
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "📱 Open Channel",
+                url="https://unseenclubbot.netlify.app/"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 Backup Channel",
+                url="https://t.me/+hOT3oXhwGyxmNjA1"
+            )
+        ]
+    ]
+
+    await update.message.reply_text(
+        "🎉 Welcome!\n\n"
+        "👇 Choose where to view",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+    print(
+        "✅ USER SAVED:",
+        user.id,
+        user.username
+    )
 
 # =========================
 # CHANNEL POSTS
@@ -277,7 +332,7 @@ def main():
     app.add_handler(
         CommandHandler(
             "start",
-            start
+            start_command
         )
     )
 
