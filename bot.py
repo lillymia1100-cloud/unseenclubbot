@@ -471,6 +471,7 @@ def run_web():
 
 
 # =========================
+# =========================
 # MAIN
 # =========================
 
@@ -528,34 +529,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    )
-
-    threading.Thread(
-        target=run_web,
-        daemon=True
-    ).start()
-
-    print(
-        "🌐 Web server started on port",
-        PORT
-    )
-
-    print(
-        "🤖 Bot is running..."
-    )
-
-    print(
-        "📣 Channel post listener is running..."
-    )
-
-        app.run_polling(
-        drop_pending_updates=True
-    )
-
-
-if __name__ == "__main__":
-    main()
-
-
 if __name__ == "__main__":
     main()
