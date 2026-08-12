@@ -108,7 +108,65 @@ def api_posts():
         "posts": posts,
         "count": len(posts)
     })
+# =========================
+# TELEGRAM THUMBNAIL PROXY
+# =========================
 
+from urllib.request import urlopen
+import json as json_module
+
+@web.route("/api/thumb/<file_id>")
+def thumbnail(file_id):
+
+    if not BOT_TOKEN:
+        return "BOT_TOKEN is not set", 500
+
+    try:
+
+        # Get Telegram file information
+        info_url = (
+            f"https://api.telegram.org/bot{BOT_TOKEN}/getFile"
+            f"?file_id={file_id}"
+        )
+
+        with urlopen(info_url) as response:
+
+            data = json_module.loads(
+                response.read().decode("utf-8")
+            )
+
+        if not data.get("ok"):
+            return "Telegram file not found", 404
+
+        file_path = data["result"]["file_path"]
+
+        # Download image from Telegram
+        file_url = (
+            f"https://api.telegram.org/file/bot"
+            f"{BOT_TOKEN}/{file_path}"
+        )
+
+        with urlopen(file_url) as response:
+
+            image_data = response.read()
+
+            content_type = (
+                response.headers.get(
+                    "Content-Type",
+                    "image/jpeg"
+                )
+            )
+
+        return image_data, 200, {
+            "Content-Type": content_type,
+            "Cache-Control": "public, max-age=86400"
+        }
+
+    except Exception as e:
+
+        print("THUMBNAIL ERROR:", e)
+
+        return "Thumbnail error", 500
 
 # =========================
 # START
