@@ -45,8 +45,8 @@ def load_posts():
         with conn.cursor() as cur:
 
             cur.execute("""
-                SELECT title, thumb, links, created_at
-                FROM posts
+                SELECT id, title, thumb, links, created_at
+                FROM posts_new
                 ORDER BY created_at DESC
                 LIMIT 100
             """)
@@ -55,17 +55,16 @@ def load_posts():
 
     posts = []
 
-    for index, row in enumerate(rows):
+    for row in rows:
 
         posts.append({
-            "id": index + 1,
-            "title": row[0] or "",
-            "thumb": row[1] or "",
-            "links": row[2] or []
+            "id": row[0],
+            "title": row[1] or "",
+            "thumb": row[2] or "",
+            "links": row[3] or []
         })
 
     return posts
-
 def save_post(post):
 
     if not DATABASE_URL:
@@ -76,7 +75,7 @@ def save_post(post):
         with conn.cursor() as cur:
 
             cur.execute("""
-                INSERT INTO posts
+                INSERT INTO posts_new
                 (title, thumb, links)
                 VALUES (%s, %s, %s)
             """, (
