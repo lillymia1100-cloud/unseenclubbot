@@ -1,3 +1,4 @@
 Flask
-python-telegram-bot
 flask-cors
+python-telegram-bot
+psycopg[binary]
