@@ -250,24 +250,14 @@ async def channel_post(
         ]
 
     # Add newest first
-# Save post permanently in Supabase
-
-save_post(new_post)
-
-print(
-    "✅ POST SAVED PERMANENTLY:",
-    new_post["id"]
-)
     # Save post permanently in Supabase
 
-save_post(new_post)
+    save_post(new_post)
 
-print(
-    "✅ POST SAVED PERMANENTLY:",
-    new_post["id"]
-)
+    print(
+        "✅ POST SAVED PERMANENTLY:",
+        new_post["id"]
     )
-
 
 # =========================
 # WEB SERVER
