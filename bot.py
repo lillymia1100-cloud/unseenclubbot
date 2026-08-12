@@ -151,8 +151,6 @@ async def channel_post(
 
     post = update.channel_post
 
-    posts = load_posts()
-
     new_post = {
         "id": post.message_id,
         "title": "",
@@ -160,50 +158,37 @@ async def channel_post(
         "links": []
     }
 
-    # TEXT
-    if post.text:
+    # =========================
+    # TEXT / CAPTION
+    # =========================
 
-        new_post["title"] = post.text
+    text = post.text or post.caption or ""
 
-        print(
-            "CHANNEL TEXT:",
-            post.text
-        )
+    new_post["title"] = text
 
-    # CAPTION
-    elif post.caption:
+    print("CHANNEL TEXT/CAPTION:", text)
 
-        new_post["title"] = post.caption
+    # =========================
+    # EXTRACT LINKS
+    # =========================
 
-        print(
-            "CHANNEL CAPTION:",
-            post.caption
-        )
+    for word in text.split():
 
-    # VIDEO
-    if post.video:
+        if word.startswith("http://") or word.startswith("https://"):
 
-        print(
-            "CHANNEL VIDEO:",
-            post.video.file_id
-        )
+            new_post["links"].append(word)
 
-        # Telegram file URL
-        file = await context.bot.get_file(
-            post.video.file_id
-        )
+            print("CHANNEL LINK:", word)
 
-        new_post["thumb"] = file.file_path
-
+    # =========================
     # PHOTO
-    elif post.photo:
+    # =========================
+
+    if post.photo:
 
         photo = post.photo[-1]
 
-        print(
-            "CHANNEL PHOTO:",
-            photo.file_id
-        )
+        print("CHANNEL PHOTO:", photo.file_id)
 
         file = await context.bot.get_file(
             photo.file_id
@@ -211,7 +196,24 @@ async def channel_post(
 
         new_post["thumb"] = file.file_path
 
+    # =========================
+    # VIDEO
+    # =========================
+
+    elif post.video:
+
+        print("CHANNEL VIDEO:", post.video.file_id)
+
+        file = await context.bot.get_file(
+            post.video.file_id
+        )
+
+        new_post["thumb"] = file.file_path
+
+    # =========================
     # DOCUMENT
+    # =========================
+
     elif post.document:
 
         print(
@@ -219,31 +221,28 @@ async def channel_post(
             post.document.file_id
         )
 
-    # Extract URLs from text/caption
-    text = post.text or post.caption or ""
+    # =========================
+    # FALLBACK LINK
+    # =========================
 
-    words = text.split()
-
-    for word in words:
-
-        if (
-            word.startswith("http://")
-            or word.startswith("https://")
-        ):
-            new_post["links"].append(
-                word
-            )
-
-    # If no link but video/photo exists,
-    # use Telegram file URL
     if not new_post["links"] and new_post["thumb"]:
 
         new_post["links"] = [
             new_post["thumb"]
         ]
 
-    # Add newest first
-    # Save post permanently in Supabase
+    print("FINAL POST:", new_post)
+
+    # =========================
+    # SAVE TO SUPABASE
+    # =========================
+
+    save_post(new_post)
+
+    print(
+        "✅ POST SAVED PERMANENTLY:",
+        new_post["id"]
+    )
 
     save_post(new_post)
 
