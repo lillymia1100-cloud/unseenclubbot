@@ -3,12 +3,15 @@ import json
 import threading
 
 from flask import Flask, jsonify
+from flask_cors import CORS
+
 from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     WebAppInfo,
 )
+
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -25,6 +28,7 @@ PORT = int(os.getenv("PORT", "10000"))
 DATA_FILE = "posts.json"
 
 web = Flask(__name__)
+CORS(web)
 
 
 # =========================
