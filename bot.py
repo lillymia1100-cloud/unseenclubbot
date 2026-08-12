@@ -77,15 +77,9 @@ def save_post(post):
 
             cur.execute("""
                 INSERT INTO posts
-                (id, title, thumb, links)
-                VALUES (%s, %s, %s, %s)
-                ON CONFLICT (id)
-                DO UPDATE SET
-                    title = EXCLUDED.title,
-                    thumb = EXCLUDED.thumb,
-                    links = EXCLUDED.links
+                (title, thumb, links)
+                VALUES (%s, %s, %s)
             """, (
-                post["id"],
                 post["title"],
                 post["thumb"],
                 json.dumps(post["links"])
