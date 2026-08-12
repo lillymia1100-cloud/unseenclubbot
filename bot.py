@@ -1,6 +1,7 @@
 import os
 import json
 import threading
+import psycopg
 
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -25,37 +26,73 @@ WEB_APP_URL = "https://unseenclubbot.netlify.app/"
 
 PORT = int(os.getenv("PORT", "10000"))
 
-DATA_FILE = "posts.json"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 web = Flask(__name__)
 CORS(web)
-
 
 # =========================
 # POSTS DATABASE
 # =========================
 
 def load_posts():
-    if not os.path.exists(DATA_FILE):
-        return []
 
-    try:
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return []
+    if not DATABASE_URL:
+        raise ValueError("DATABASE_URL is not set")
+
+    with psycopg.connect(DATABASE_URL) as conn:
+
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                SELECT id, title, thumb, links
+                FROM posts
+                ORDER BY created_at DESC
+                LIMIT 100
+            """)
+
+            rows = cur.fetchall()
+
+    posts = []
+
+    for row in rows:
+
+        posts.append({
+            "id": row[0],
+            "title": row[1] or "",
+            "thumb": row[2] or "",
+            "links": row[3] or []
+        })
+
+    return posts
 
 
-def save_posts(posts):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(
-            posts,
-            f,
-            ensure_ascii=False,
-            indent=2
-        )
+def save_post(post):
 
+    if not DATABASE_URL:
+        raise ValueError("DATABASE_URL is not set")
 
+    with psycopg.connect(DATABASE_URL) as conn:
+
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                INSERT INTO posts
+                (id, title, thumb, links)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (id)
+                DO UPDATE SET
+                    title = EXCLUDED.title,
+                    thumb = EXCLUDED.thumb,
+                    links = EXCLUDED.links
+            """, (
+                post["id"],
+                post["title"],
+                post["thumb"],
+                json.dumps(post["links"])
+            ))
+
+        conn.commit()
 # =========================
 # WEB APP API
 # =========================
@@ -213,19 +250,22 @@ async def channel_post(
         ]
 
     # Add newest first
-    posts.insert(
-        0,
-        new_post
-    )
+# Save post permanently in Supabase
 
-    # Keep last 100 posts
-    posts = posts[:100]
+save_post(new_post)
 
-    save_posts(posts)
+print(
+    "✅ POST SAVED PERMANENTLY:",
+    new_post["id"]
+)
+    # Save post permanently in Supabase
 
-    print(
-        "✅ POST SAVED:",
-        new_post["id"]
+save_post(new_post)
+
+print(
+    "✅ POST SAVED PERMANENTLY:",
+    new_post["id"]
+)
     )
 
 
