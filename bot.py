@@ -236,7 +236,7 @@ async def channel_post(
 
             print("CHANNEL LINK:", word)
 
-    # =========================
+        # =========================
     # PHOTO
     # =========================
 
@@ -246,11 +246,7 @@ async def channel_post(
 
         print("CHANNEL PHOTO:", photo.file_id)
 
-        file = await context.bot.get_file(
-            photo.file_id
-        )
-
-        new_post["thumb"] = file.file_path
+        new_post["thumb"] = photo.file_id
 
     # =========================
     # VIDEO
@@ -260,11 +256,7 @@ async def channel_post(
 
         print("CHANNEL VIDEO:", post.video.file_id)
 
-        file = await context.bot.get_file(
-            post.video.file_id
-        )
-
-        new_post["thumb"] = file.file_path
+        new_post["thumb"] = post.video.file_id
 
     # =========================
     # DOCUMENT
@@ -287,7 +279,7 @@ async def channel_post(
             new_post["thumb"]
         ]
 
-    print("FINAL POST:", new_post)
+        print("FINAL POST:", new_post)
 
     # =========================
     # SAVE TO SUPABASE
