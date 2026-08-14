@@ -99,7 +99,7 @@ async def send_batch_notification(bot):
 
     global pending_notifications
 
-    await asyncio.sleep(10)
+    await asyncio.sleep(3)
 
     async with notification_lock:
 
