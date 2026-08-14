@@ -111,13 +111,13 @@ async def send_batch_notification(bot):
 
     if count == 1:
         text = (
-            "1 New Post Uploaded! ✔\n\n"
-            "Tap below to view"
+            "1 🔥 10 𝐍𝐞𝐰 𝐏𝐨𝐬𝐭𝐬 𝐔𝐩𝐥𝐨𝐚𝐝𝐞𝐝! ✅\n\n"
+            "👇 Tap below to view"
         )
     else:
         text = (
-            f"{count} New Posts Uploaded! ✔\n\n"
-            "Tap below to view"
+            f"{count} 🔥 10 𝐍𝐞𝐰 𝐏𝐨𝐬𝐭𝐬 𝐔𝐩𝐥𝐨𝐚𝐝𝐞𝐝! ✅\n\n"
+            "👇 Tap below to view"
         )
 
     keyboard = [
