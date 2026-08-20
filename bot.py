@@ -132,7 +132,7 @@ async def send_batch_notification(bot):
         [
             InlineKeyboardButton(
                 "📢 Backup Channel",
-                url="https://t.me/+j-nl9Pj8Otg1NzZl"
+                url="https://t.me/+hOT3oXhwGyxmNjA1"
             )
         ]
     ]
@@ -339,7 +339,7 @@ async def start_command(
         [
             InlineKeyboardButton(
                 "📢 Backup Channel",
-                url="https://t.me/+hOT3oXhwGyxmNjA1"
+                url="https://t.me/+j-nl9Pj8Otg1NzZl"
             )
         ]
     ]
