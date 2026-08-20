@@ -123,7 +123,7 @@ async def send_batch_notification(bot):
     keyboard = [
     [
         InlineKeyboardButton(
-            "🌐 Open Channel",
+            "📱 Open Channel",
             web_app=WebAppInfo(
                 url="https://unseenclubbot.netlify.app/"
             )
@@ -336,7 +336,7 @@ async def start_command(
     keyboard = [
     [
         InlineKeyboardButton(
-            "🌐 Open Channel",
+            "📱 Open Channel",
             web_app=WebAppInfo(
                 url="https://unseenclubbot.netlify.app/"
             )
