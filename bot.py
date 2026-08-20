@@ -121,21 +121,27 @@ async def send_batch_notification(bot):
         )
 
     keyboard = [
-        [
-            InlineKeyboardButton(
-                "📱 Open Channel",
-                web_app=WebAppInfo(
-                    url=WEB_APP_URL
-                )
+    [
+        InlineKeyboardButton(
+            "🌐 Open Channel",
+            web_app=WebAppInfo(
+                url="https://unseenclubbot.netlify.app/"
             )
-        ],
-        [
-            InlineKeyboardButton(
-                "📢 Backup Channel",
-                url="https://t.me/+hOT3oXhwGyxmNjA1"
-            )
-        ]
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            "📢 Backup Channel",
+            url="https://t.me/+p1s_1WECSeYwMGU1"
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            "📢 Backup Channel 2",
+            url="https://t.me/+4l6HuESg5s5jZmNl"
+        )
     ]
+]
 
     with psycopg.connect(DATABASE_URL) as conn:
 
@@ -328,27 +334,35 @@ async def start_command(
         conn.commit()
 
     keyboard = [
-        [
-            InlineKeyboardButton(
-    "📱 Open Channel",
-    web_app=WebAppInfo(
-        url="https://unseenclubbot.netlify.app/"
-    )
-)
-        ],
-        [
-            InlineKeyboardButton(
-                "📢 Backup Channel",
-                url="https://t.me/+j-nl9Pj8Otg1NzZl"
+    [
+        InlineKeyboardButton(
+            "🌐 Open Channel",
+            web_app=WebAppInfo(
+                url="https://unseenclubbot.netlify.app/"
             )
-        ]
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            "📢 Backup Channel",
+            url="https://t.me/+p1s_1WECSeYwMGU1"
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            "📢 Backup Channel 2",
+            url="https://t.me/+4l6HuESg5s5jZmNl"
+        )
     ]
+]
 
     await update.message.reply_text(
-        "🎉 Welcome!\n\n"
-        "👇 Choose where to view",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+    "✅ Verification Complete!\n\n"
+    "Please wait patiently and stay tuned. We will send exclusive updates "
+    "and VIP content directly to this chat!\n\n"
+    "And don't forget to join the main channel for the latest link 💦🤤👇👇",
+    reply_markup=InlineKeyboardMarkup(keyboard)
+)
 
     print(
         "✅ USER SAVED:",
