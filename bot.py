@@ -357,8 +357,7 @@ async def start_command(
 ]
 
     await update.message.reply_text(
-    "✅ Verification Complete!\n\n"
-    "Please wait patiently and stay tuned.",
+    "✅ Verification Complete!\n\n",
     reply_markup=InlineKeyboardMarkup(keyboard)
 )
 
