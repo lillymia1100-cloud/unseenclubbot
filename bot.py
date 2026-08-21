@@ -345,22 +345,20 @@ async def start_command(
     [
         InlineKeyboardButton(
             "📢 Backup Channel",
-            url="https://t.me/+p1s_1WECSeYwMGU1"
+            url="https://t.me/+jbahu0niyhgyMWM1"
         )
     ],
     [
         InlineKeyboardButton(
             "📢 Backup Channel 2",
-            url="https://t.me/+a-wItBCOeQdhMzNl"
+            url="https://t.me/+hOT3oXhwGyxmNjA1"
         )
     ]
 ]
 
     await update.message.reply_text(
     "✅ Verification Complete!\n\n"
-    "Please wait patiently and stay tuned. We will send exclusive updates "
-    "and VIP content directly to this chat!\n\n"
-    "And don't forget to join the main channel for the latest link 💦🤤👇👇",
+    "Please wait patiently and stay tuned.",
     reply_markup=InlineKeyboardMarkup(keyboard)
 )
 
